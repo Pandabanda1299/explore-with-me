@@ -18,7 +18,13 @@
         <module>dto</module>
         <module>stats-client</module>
         <module>stats-server</module>
-        <module>stats-client</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

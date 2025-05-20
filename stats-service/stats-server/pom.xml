@@ -8,11 +8,8 @@
     </parent>
 
     <artifactId>stats-server</artifactId>
-    <packaging>jar</packaging>
 
     <name>stats-server</name>
-
-
 
 
     <dependencies>

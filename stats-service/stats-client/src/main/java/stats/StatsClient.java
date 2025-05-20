@@ -1,4 +1,4 @@
-package main.java.stats;
+package stats;
 
 import main.java.stats.exception.InternalErrorException;
 import main.java.stats.exception.NotFoundException;
