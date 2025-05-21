@@ -1,4 +1,4 @@
-package main.java.stats.exception;
+package stats.exception;
 
 public class NotFoundException extends RuntimeException {
 

@@ -52,12 +52,13 @@ public class StatsServiceImpl implements StatsService {
                 resultList = statsRepository.findAllWithUrisTrueUnique(start, end, uris);
             }
 
-    }  return resultList.stream()
+        }
+        return resultList.stream()
                 .map(stat -> ViewStatDtoResponse.builder()
                         .app(stat.getApp())
                         .uri(stat.getUri())
                         .hits(stat.getHits())
                         .build())
                 .toList();
-        }
     }
+}

@@ -1,54 +1,50 @@
 services:
   stats-db:
-    image: postgres:16.1
+    image: postgres:14-alpine
     container_name: stats-db
-    environment:
-      POSTGRES_DB: stats
-      POSTGRES_USER: stats_user
-      POSTGRES_PASSWORD: stats_password
-    ports:
-      - "5433:5432"
-    volumes:
-      - stats_data:/var/lib/postgresql/data
-
-  stats-server:
-    build:
-      context: ./stats-server  # Проверьте правильность пути!
-      dockerfile: Dockerfile
-    container_name: stats-server
-    depends_on:
-      stats-db:
-        condition: service_healthy
-    ports:
-      - "9090:9090"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats
-      SPRING_DATASOURCE_USERNAME: stats_user
-      SPRING_DATASOURCE_PASSWORD: stats_password
-
-  ewm-db:
-    image: postgres:16.1
-    container_name: ewm-db
-    environment:
-      POSTGRES_DB: ewm
-      POSTGRES_USER: ewm_user
-      POSTGRES_PASSWORD: ewm_password
     ports:
       - "5432:5432"
-    volumes:
-      - ewm_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=stats
+      - POSTGRES_USER=stats
+      - POSTGRES_DB=stats
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
 
-  main-service:
-    build:
-      context: ./main-service
-      dockerfile: Dockerfile
-    container_name: main-service
+  stats-server:
+    build: stats/stats-server
+    container_name: stats-server
+    ports:
+      - "9090:9090"
     depends_on:
-      ewm-db:
-        condition: service_healthy
+      - stats-db
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: ewm-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=main
+      - POSTGRES_USER=main
+      - POSTGRES_DB=main
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  ewm-service:
+    build: ewm-service
+    container_name: ewm-service
     ports:
       - "8080:8080"
-
-volumes:
-  stats_data:
-  ewm_data:
+    depends_on:
+      - ewm-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main_db
+      - SPRING_DATASOURCE_USERNAME=main
+      - SPRING_DATASOURCE_PASSWORD=main

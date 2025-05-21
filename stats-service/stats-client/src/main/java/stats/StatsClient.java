@@ -1,16 +1,21 @@
 package stats;
 
-import main.java.stats.exception.InternalErrorException;
-import main.java.stats.exception.NotFoundException;
-import main.java.stats.exception.ValidationException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.stats.EndpointHitDtoRequest;
 import ru.practicum.stats.ViewStatDtoResponse;
+import stats.exception.InternalErrorException;
+import stats.exception.NotFoundException;
+import stats.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +42,8 @@ public class StatsClient {
                 .toUriString();
 
         ResponseEntity<List<ViewStatDtoResponse>> response = restTemplate.exchange(uri, HttpMethod.GET,
-                null, new ParameterizedTypeReference<>() {});
+                null, new ParameterizedTypeReference<>() {
+                });
 
         if (response.getStatusCode().value() == 404) {
             throw new NotFoundException("Ошибка при записи события (метод hit)");
