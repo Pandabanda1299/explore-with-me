@@ -38,13 +38,13 @@ services:
       retries: 10
 
   ewm-service:
-    build: ewm-service
-    container_name: ewm-service
+    build:  main-service
+    container_name: main-service
     ports:
       - "8080:8080"
     depends_on:
       - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main:5432/main
       - SPRING_DATASOURCE_USERNAME=main
       - SPRING_DATASOURCE_PASSWORD=main
