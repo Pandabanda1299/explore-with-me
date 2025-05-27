@@ -37,6 +37,6 @@ public class EndpointHit {
     @Column(nullable = false)
     String ip;
 
-    @Column(nullable = false)
+    @Column(name = "time_stamp", nullable = false)
     LocalDateTime timestamp;
 }

@@ -21,6 +21,8 @@ services:
       - "9090:9090"
     depends_on:
       - stats-db
+    environment:
+          - SERVER_PORT=9090
 
   ewm-db:
     image: postgres:14-alpine
