@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.stats.EndpointHitDtoRequest;
 import ru.practicum.stats.EndpointHitStatsProjection;
 import ru.practicum.stats.ViewStatDtoResponse;
@@ -31,7 +32,9 @@ public class StatsServiceImpl implements StatsService {
     public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
                                                List<String> uris, Boolean unique) {
         List<EndpointHitStatsProjection> resultList;
-
+        if (start.isAfter(end)) {
+            throw new ValidationException("Start date cannot be after end date");
+        }
         if (Objects.isNull(uris) || uris.isEmpty()) {
 
             if (!unique) {
