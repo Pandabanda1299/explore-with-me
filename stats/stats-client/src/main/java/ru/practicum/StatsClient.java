@@ -37,7 +37,7 @@ public class StatsClient {
     public List<ViewStatDtoResponse> findStats(LocalDateTime start, LocalDateTime end,
                                                List<String> uris, Boolean unique) {
         String uri = UriComponentsBuilder.fromHttpUrl(serverUrl)
-                .path("/ru/practicum")
+                .path("/stats")
                 .queryParam("start", start)
                 .queryParam("end", end)
                 .queryParam("uris", uris)
