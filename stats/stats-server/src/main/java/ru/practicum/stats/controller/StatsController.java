@@ -19,7 +19,6 @@ public class StatsController {
     private final StatsService statsService;
 
     @GetMapping("/stats")
-    @ResponseStatus(HttpStatus.CREATED)
     public List<ViewStatDtoResponse> findStats(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
@@ -29,6 +28,7 @@ public class StatsController {
     }
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveUserRequest(@Valid @RequestBody EndpointHitDtoRequest dto) {
         statsService.create(dto);
     }
