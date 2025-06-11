@@ -5,10 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.exception.ValidationException;
+
 import ru.practicum.stats.EndpointHitDtoRequest;
 import ru.practicum.stats.EndpointHitStatsProjection;
 import ru.practicum.stats.ViewStatDtoResponse;
+import ru.practicum.stats.exception.ValidationException;
 import ru.practicum.stats.mapper.EndpointDtoMapper;
 import ru.practicum.stats.storage.StatsRepository;
 
