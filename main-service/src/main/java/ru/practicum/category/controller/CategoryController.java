@@ -1,5 +1,6 @@
 package ru.practicum.category.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,8 +23,8 @@ public class CategoryController {
     final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDto> findCategories(@RequestParam(defaultValue = "0") Integer from,
-                                            @RequestParam(defaultValue = "10") Integer size) {
+    public List<CategoryDto> findCategories(@RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                            @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return categoryService.findCategories(from, size);
     }
 

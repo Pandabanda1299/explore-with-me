@@ -2,6 +2,7 @@ package ru.practicum.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,10 @@ public class PublicEventController {
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                 LocalDateTime rangeEnd,
                                                 @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                                @RequestParam(required = false) String sort,
+                                                @RequestParam(required = false, defaultValue = "EVENT_DATE")
+                                                    @Pattern(regexp = "EVENT_DATE|VIEWS",
+                                                            message = "Sort must be either 'EVENT_DATE' or 'VIEWS'")
+                                                    String sort,
                                                 @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
                                                 @RequestParam(defaultValue = "10") Integer size,
                                                 HttpServletRequest httpServletRequest) {
