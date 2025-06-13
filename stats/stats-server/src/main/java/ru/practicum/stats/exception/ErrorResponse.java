@@ -1,4 +1,4 @@
-package stats.exception;
+package ru.practicum.stats.exception;
 
 import lombok.Value;
 
