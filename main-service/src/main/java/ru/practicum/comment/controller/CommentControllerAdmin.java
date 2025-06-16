@@ -1,5 +1,6 @@
 package ru.practicum.comment.controller;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,8 +36,8 @@ public class CommentControllerAdmin {
                                                       @RequestParam(required = false)
                                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                       LocalDateTime rangeEnd,
-                                                      @RequestParam(defaultValue = "0") Integer from,
-                                                      @RequestParam(defaultValue = "10") Integer size) {
+                                                      @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                      @RequestParam(defaultValue = "10") @PositiveOrZero Integer size) {
         return commentService.findCommentsAdmin(users, events, rangeStart, rangeEnd, from, size);
     }
 

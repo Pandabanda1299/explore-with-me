@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.comment.dto.CommentDtoRequest;
 import ru.practicum.comment.dto.CommentDtoResponse;
 import ru.practicum.comment.mapper.CommentMapper;
@@ -36,10 +37,10 @@ public class CommentServiceImpl implements CommentService {
     final CommentRepository commentRepository;
     final EventRepository eventRepository;
     final UserRepository userRepository;
-
     final CommentMapper commentMapper;
 
     @Override
+    @Transactional
     public CommentDtoResponse create(Long userId, Long eventId, CommentDtoRequest dto) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Событие " + eventId + " не найдено"));
@@ -56,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentDtoResponse update(Long userId, Long eventId, Long commId, CommentDtoRequest dto) {
         Comment comment = getCommentCheckParams(userId, eventId, commId);
         comment.setText(dto.getText());
@@ -64,6 +66,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void delete(Long userId, Long eventId, Long commId) {
         getCommentCheckParams(userId, eventId, commId);
         commentRepository.deleteById(commId);
@@ -105,6 +108,9 @@ public class CommentServiceImpl implements CommentService {
                                                       LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                       Integer from, Integer size) {
 
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new ValidationException("Дата начала не может быть позже даты окончания ");
+        }
         Specification<Comment> spec = DbCommentSpecification.getSpecificationAdmin(users, events, rangeStart, rangeEnd);
 
         Pageable pageable = PageRequest.of(from / size, size);
@@ -113,6 +119,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toDto(comments);
     }
 
+    @Transactional
     @Override
     public void deleteCommentAdmin(Long commId) {
         if (!commentRepository.existsById(commId)) {
@@ -122,22 +129,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Comment getCommentCheckParams(Long userId, Long eventId, Long commId) {
-        if (!eventRepository.existsById(eventId)) {
-            throw new NotFoundException("Событие " + eventId + " не найдено");
-        }
-
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь " + userId + " не найден");
-        }
-
-        Comment comment = commentRepository.findById(commId).orElseThrow(() ->
-                new NotFoundException("Комментарий " + commId + " не существует"));
-
-        if (!Objects.equals(comment.getUser().getId(), userId)) {
-            throw new ConflictException("Пользователь " + userId + " не является создателем комментария");
-        }
-
-        return comment;
+        return commentRepository.findCommentWithUserAndEvent(commId, eventId, userId)
+                .orElseThrow(() -> {
+                    if (!commentRepository.existsById(commId)) {
+                        return new NotFoundException("Комментарий " + commId + " не найден");
+                    }
+                    if (!eventRepository.existsById(eventId)) {
+                        return new NotFoundException("Событие " + eventId + " не найдено");
+                    }
+                    if (!userRepository.existsById(userId)) {
+                        return new NotFoundException("Пользователь " + userId + " не найден");
+                    }
+                    return new ConflictException("Комментарий не принадлежит пользователю " + userId + " или событию "
+                            + eventId);
+                });
     }
-
 }
