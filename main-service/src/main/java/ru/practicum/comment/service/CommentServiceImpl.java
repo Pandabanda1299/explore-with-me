@@ -26,7 +26,7 @@ import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+
 
 @Slf4j
 @Service
